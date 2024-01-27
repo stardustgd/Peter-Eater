@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState} from 'react';
 import { 
     StyleSheet, 
     SafeAreaView, 
     SectionList,
-    StatusBar
+    StatusBar,
+    TouchableOpacity
 } from 'react-native';
 
 import { Text, View } from './Themed';
@@ -26,17 +27,19 @@ const DATA = [
     {
       title: 'Desserts',
       data: ['Cheese Cake', 'Ice Cream'],
+      review: ['test', 'test'],
     },
   ];
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: 500,
         paddingTop: StatusBar.currentHeight,
         marginHorizontal: 16,
     },
     item: {
-        backgroundColor: '#f9c2ff',
+        backgroundColor: '#0064a4',
         padding: 20,
         marginVertical: 8,
     },
@@ -46,15 +49,19 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 24,
+        color: '#ffffff'
     },
+    itemTouchable: { 
+        borderRadius: 10, 
+        overflow: "hidden", 
+    }, 
     });
-  
 
-export default function TestComponent() {
+export default function TestComponent({ data = DATA }) {
     return (
         <SafeAreaView style={styles.container}>
         <SectionList
-        sections={DATA}
+        sections={data}
         keyExtractor={(item, index) => item + index}
         renderItem={({item}) => (
             <View style={styles.item}>
