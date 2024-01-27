@@ -1,16 +1,20 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native'
 
-import MenuComponent from '@/components/MenuComponent';
-import { Text, View } from '@/components/Themed';
+import MenuComponent from '@/components/MenuComponent'
+import { Text, View } from '@/components/Themed'
 
-export default function TabOneScreen() {
+export default function BrandywineTab() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Brandywine</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+      <View
+        style={styles.separator}
+        lightColor="#eee"
+        darkColor="rgba(255,255,255,0.1)"
+      />
       <MenuComponent />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -28,4 +32,4 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
-});
+})
