@@ -1,5 +1,6 @@
 import React from 'react'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
+import IonIcons from '@expo/vector-icons/Ionicons'
 import { Link, Tabs } from 'expo-router'
 import { Pressable } from 'react-native'
 
@@ -48,13 +49,13 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      < Tabs.Screen
         name="Anteatery"
         options={{
           title: 'Anteatery',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
-    </Tabs>
+    </Tabs >
   )
 }
