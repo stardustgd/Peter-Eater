@@ -9,7 +9,6 @@ import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 
-import { Text, TouchableOpacity } from 'react-native'
 import { useColorScheme } from '@/components/useColorScheme'
 
 export {
@@ -19,7 +18,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: 'home',
+  initialRouteName: '(tabs)',
 }
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -49,32 +48,14 @@ export default function RootLayout() {
   return <RootLayoutNav />
 }
 
-// function HomeScreen({ navigation }) {
-//   return (
-//     <ThemeProvider value={useColorScheme() === 'dark' ? DarkTheme : DefaultTheme}>
-//       <Stack>
-//         <Stack.Screen
-//           name="Home"
-//           component={() => (
-//             <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
-//               <Text>Go to Tabs</Text>
-//             </TouchableOpacity>
-//           )}
-//           />
-//       </Stack>
-//
-//
-//     </ThemeProvider>
-//   );
-// }
-
 function RootLayoutNav() {
   const colorScheme = useColorScheme()
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName="home">
-        <Stack.Screen name="home" />
+      <Stack initialRouteName="(tabs)/Brandywine">
+        {/* <Stack initialRouteName="home"> */}
+        {/* <Stack.Screen name="home" /> */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>

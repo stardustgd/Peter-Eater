@@ -1,42 +1,17 @@
-// import MenuComponent from '@/components/MenuComponent'
-// import { Text } from '@/components/Themed'
-// import FontAwesome from '@expo/vector-icons/FontAwesome'
-// import { View, Pressable } from 'react-native'
-// import { Link } from 'expo-router'
-//
-// import Colors from '@/constants/Colors'
-// import { useColorScheme } from '@/components/useColorScheme'
-//
-// export default function Home() {
-//   const colorScheme = useColorScheme()
-//
-//   return (
-//     <View>
-//       <Link href="/(tabs)/Brandywine" asChild>
-//         <Pressable>
-//           {({ pressed }) => (
-//             <FontAwesome
-//               name="info-circle"
-//               size={25}
-//               color={Colors[colorScheme ?? 'light'].text}
-//               style={{
-//                 marginRight: 15,
-//                 opacity: pressed ? 0.5 : 1,
-//               }}
-//             />
-//           )}
-//         </Pressable>
-//       </Link>
-//     </View>
-//   )
-// }
+import * as React from "react"
+import { Image } from "expo-image"
+import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Link } from 'expo-router'
+import FontAwesome from '@expo/vector-icons/FontAwesome'
+import { useNavigation } from '@react-navigation/native'
 
-import * as React from "react";
-import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
-// import { Color, FontFamily } from "@/constants/Colors";
+import Colors from '@/constants/Colors'
+import { useColorScheme } from '@/components/useColorScheme'
 
 const PeterEaterOpeningPage = () => {
+  const colorScheme = useColorScheme()
+  const navigation = useNavigation();
+
   return (
     <View style={styles.peterEaterOpeningPage}>
       <Image
@@ -54,6 +29,22 @@ const PeterEaterOpeningPage = () => {
         contentFit="cover"
         source={require("../assets/images/peter_eater_home.png")}
       />
+
+      <Link href="/(tabs)/Brandywine" asChild>
+        <Pressable>
+          {({ pressed }) => (
+            <FontAwesome
+              name="info-circle"
+              size={25}
+              color={Colors[colorScheme ?? 'light'].text}
+              style={{
+                marginRight: 15,
+                opacity: pressed ? 0.5 : 1,
+              }}
+            />
+          )}
+        </Pressable>
+      </Link>
       <Image
         style={[styles.image13Icon, styles.iconPosition]}
         contentFit="cover"
