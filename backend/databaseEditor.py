@@ -2,42 +2,80 @@ import sqlite3
 import requests
 from datetime import date, timedelta
 
-def create_connection():
-    # Connect to the existing SQLite database file
-    db = sqlite3.connect('eater_info.db')
-    cursor = db.cursor()
-    print('Connected to the existing database')
-    return db, cursor
-
-def close_connection(db):
-    # Close the database connection when done
-    db.close()
-    print('Closed the database connection')
-
-def populate_meals_database(names, cursor):
+#tested
+def populate_meals_database(names):
+    conn = sqlite3.connect('eater_info.db')
+    cursor = conn.cursor()
     insert_meal_query = 'INSERT INTO Meals (name) VALUES (?)'
   
     for name in names:
         cursor.execute(insert_meal_query, (name,))
         print(f'Inserted meal: {name} (ID: {cursor.lastrowid})')
 
-def populate_cafeteria_database(cafeterias, cursor):
-    insert_cafeteria_query = 'INSERT INTO Cafeterias (name) VALUES (?)'
-    insert_station_query = 'INSERT INTO Stations (name, cafeteria_id) VALUES (?, ?)'
-  
-    for cafeteria in cafeterias:
-        # Insert cafeteria
-        cursor.execute(insert_cafeteria_query, (cafeteria['name'],))
-        cafeteria_id = cursor.lastrowid
-        print(f'Inserted cafeteria: {cafeteria["name"]} (ID: {cafeteria_id})')
-  
-        # Insert foods for each station
-        for station in cafeteria['stations']:
-            cursor.execute(insert_station_query, (station, cafeteria_id))
-            print(f'Inserted food: {station} for cafeteria {cafeteria["name"]} (ID: {cursor.lastrowid})')
+        
+def populate_cafeterias(cafeteria_names):
+    db_name = 'eater_info.db'  
+    try:
+        with sqlite3.connect(db_name) as conn:
+            cursor = conn.cursor()
 
-def get_average_rating_by_food_name(food_id):
-    conn = sqlite3.connect('eater_id.db')  # Replace 'your_database_name.db' with your actual database name
+            # Iterate over cafeteria names in the list
+            for cafeteria_name in cafeteria_names:
+                # Insert into Cafeterias table
+                cursor.execute('''
+                    INSERT OR IGNORE INTO Cafeterias (name)
+                    VALUES (?)
+                ''', (cafeteria_name,))
+
+            conn.commit()
+            print("Cafeterias populated successfully.")
+
+    except sqlite3.Error as e:
+        print(f"Error populating cafeterias: {e}")
+
+def populate_stations(station_data):
+    db_name = 'eater_info.db'
+    try:
+        with sqlite3.connect(db_name) as conn:
+            cursor = conn.cursor()
+
+            # Iterate over station data in the list
+            for station_name, cafeteria_id in station_data:
+                # Insert into Stations table
+                cursor.execute('''
+                    INSERT INTO Stations (name, cafeteria_id)
+                    VALUES (?, ?)
+                ''', (station_name, cafeteria_id))
+
+            conn.commit()
+            print("Stations populated successfully.")
+
+    except sqlite3.Error as e:
+        print(f"Error populating stations: {e}")
+
+def populate_mealtimes(mealtime_names):
+    db_name = 'eater_info.db'  
+    try:
+        with sqlite3.connect(db_name) as conn:
+            cursor = conn.cursor()
+
+            # Iterate over mealtime names in the list
+            for mealtime_name in mealtime_names:
+                # Insert into Meals table
+                cursor.execute('''
+                    INSERT INTO Meals (name)
+                    VALUES (?)
+                ''', (mealtime_name,))
+
+            conn.commit()
+            print("Mealtimes populated successfully.")
+
+    except sqlite3.Error as e:
+        print(f"Error populating mealtimes: {e}")
+
+#tested
+def get_average_rating_by_food_id(food_id):
+    conn = sqlite3.connect('eater_info.db') 
     cursor = conn.cursor()
 
     try:
@@ -45,7 +83,7 @@ def get_average_rating_by_food_name(food_id):
         query = """
         SELECT AVG(rating) FROM Ratings
         JOIN Foods ON Ratings.food_id = Foods.id
-        WHERE Foods.name = ?
+        WHERE Foods.id = ?
         """
         cursor.execute(query, (food_id,))
         result = cursor.fetchone()[0]
@@ -63,6 +101,7 @@ def get_average_rating_by_food_name(food_id):
         # Close the database connection
         conn.close()
 
+#tested
 def populate_food():
 
     url = "http://127.0.0.1:5000/receive_data"
@@ -85,6 +124,7 @@ def populate_food():
         # print(station['station'])
     # print(response.text)
 
+#tested
 def get_station_id_by_name(station_name):
     conn = sqlite3.connect('eater_info.db')
     cursor = conn.cursor()
@@ -105,6 +145,7 @@ def get_station_id_by_name(station_name):
     finally:
         conn.close()
 
+#tested
 def update_food_station_and_cafeteria(food_name, new_cafeteria_id, new_station_name):
     conn = sqlite3.connect('eater_info.db')
     cursor = conn.cursor()
@@ -133,7 +174,7 @@ def update_food_station_and_cafeteria(food_name, new_cafeteria_id, new_station_n
         # Close the database connection
         conn.close()
 
-
+#tested
 def insert_food(name, description, calories, current_cafeteria_id, current_station_id, previous_rating=None):
     # Connect to the SQLite database
     conn = sqlite3.connect('eater_info.db')  
@@ -157,7 +198,7 @@ def insert_food(name, description, calories, current_cafeteria_id, current_stati
         # Close the database connection
         conn.close()
 
-
+#tested
 def is_food_exists(food_name):
     # Connect to the SQLite database
     conn = sqlite3.connect('eater_info.db')  
@@ -174,29 +215,9 @@ def is_food_exists(food_name):
     # Return True if the food exists, False otherwise
     return result > 0
 
-def populate_new():
-    #Create a connection
-    db, cursor = create_connection()
-
-    # Populate Meals database
-    meals = ['Breakfast', 'Lunch', 'Dinner']
-    populate_meals_database(meals, cursor)
-
-    # Populate Cafeteria database
-    cafeterias = [
-        {'name': 'Brandywine', 'stations': ['Ember/Grill', 'Grubb/Mainline', 'Hearth/Pizza', 'Soups',
-                                             'The Farm Stand/Salad Bar', 'Vegan', 'Crossroads', 'Compass', 'Honeycakes/Bakery']},
-        {'name': 'Ateatery', 'stations': ['Deli', 'Bakery', 'Home', 'Sizzle Grill', 'Fire and Ice Round Grill',
-                                          'Oven', 'Farmer\'s Market', 'Fire and Ice Saute', 'Soups', 'Vegan']}
-    ]
-    populate_cafeteria_database(cafeterias, cursor)
-
-    # Commit changes and close the connection
-    db.commit()
-    close_connection(db)
-
+#tested
 def get_average_mealtime_rating(cafeteria_id, meal_id):
-    conn = sqlite3.connect('eater_info.db')  # Replace 'your_database_name.db' with your actual database name
+    conn = sqlite3.connect('eater_info.db') 
     cursor = conn.cursor()
 
     try:
@@ -219,6 +240,7 @@ def get_average_mealtime_rating(cafeteria_id, meal_id):
     finally:
         conn.close()
 
+#tested
 def get_average_rating_by_cafeteria(cafeteria_id):
     conn = sqlite3.connect('eater_info.db')
     cursor = conn.cursor()
@@ -245,7 +267,7 @@ def get_average_rating_by_cafeteria(cafeteria_id):
 
 
 def get_average_daily_rating_past_days(cafeteria_id, past_days):
-    conn = sqlite3.connect('eater_info.db')  # Replace 'your_database_name.db' with your actual database name
+    conn = sqlite3.connect('eater_info.db')  
     cursor = conn.cursor()
 
     try:
@@ -276,9 +298,32 @@ def get_average_daily_rating_past_days(cafeteria_id, past_days):
         # Close the database connection
         conn.close()
 
-    
+#tested
+def insert_rating(rating, comment, food_id, meal_id):
+    conn = sqlite3.connect('eater_info.db') 
+    cursor = conn.cursor()
+
+    try:
+        # Execute the query to insert a new rating
+        query = """
+        INSERT INTO Ratings (rating, comment, food_id, meal_id)
+        VALUES (?, ?, ?, ?)
+        """
+        cursor.execute(query, (rating, comment, food_id, meal_id))
+
+        # Commit the changes to the database
+        conn.commit()
+        print("Rating inserted successfully.")
+    except sqlite3.Error as e:
+        # Handle any potential errors
+        print(f"Error inserting rating: {e}")
+    finally:
+        # Close the database connection
+        conn.close()
+
+#tested
 def insert_daily_rating(cafeteria_id, avg_daily_rating):
-    conn = sqlite3.connect('eater_info.db')  # Replace 'your_database_name.db' with your actual database name
+    conn = sqlite3.connect('eater_info.db')  
     cursor = conn.cursor()
 
     try:
@@ -303,8 +348,33 @@ def insert_daily_rating(cafeteria_id, avg_daily_rating):
         # Close the database connection
         conn.close()
 
+#tested
+def find_food_id_by_name(food_name):
+    conn = sqlite3.connect('eater_id.db')  
+    cursor = conn.cursor()
+
+    try:
+        # Execute the query to find the food_id based on the food name
+        query = "SELECT id FROM Foods WHERE name = ?"
+        cursor.execute(query, (food_name,))
+        result = cursor.fetchone()
+
+        if result:
+            return result[0]
+        else:
+            print(f"No food found with the name '{food_name}'.")
+            return None
+    except sqlite3.Error as e:
+        # Handle any potential errors
+        print(f"Error finding food_id: {e}")
+        return None
+    finally:
+        # Close the database connection
+        conn.close()
+
+#tested   
 def delete_all_ratings():
-    conn = sqlite3.connect('eater_info.db')  # Replace 'your_database_name.db' with your actual database name
+    conn = sqlite3.connect('eater_info.db')
     cursor = conn.cursor()
 
     try:
@@ -322,9 +392,26 @@ def delete_all_ratings():
         # Close the database connection
         conn.close()
 
+
+def populate_necessary():
+    populate_cafeterias(['Brandywine', 'Anteatery'])
+    populate_mealtimes(['Breakfast', 'Lunch', 'Dinner'])
+    populate_stations([['Ember/Grill', 1], ['Grubb/Mainline',1],['Hearth/Pizza',1], ['Soups',1],['The Farm Stand/Salad Bar',1], ['Vegan',1], ['Crossroads',1], ['Compass',1], ['Honeycakes/Bakery',1],
+                      ['Deli',2], ['Bakery',2], ['Home',2], ['Sizzle Grill',2], ['Fire and Ice Round Grill',2],['Oven',2], ['Farmer\'s Market',2], ['Fire and Ice Saute',2], ['Soups',2], ['Vegan',2]]
+)
 if __name__ == "__main__":
-    # populate_new()
-    populate_food()
+    # populate_mealtime()
+    # populate_food()
+    # for i in range(100):
+    #     for j in range(1,5):
+    #         insert_rating(j, 'good', 1, 1)
+    # print(get_average_rating_by_food_id(1))
+    # print(get_average_mealtime_rating(1, 1))
+    # print(get_average_rating_by_cafeteria(1))
+    # insert_daily_rating(1, 2.5)
+    # print(get_average_daily_rating_past_days(1,1))
+    populate_necessary()
+    # delete_all_ratings()
 
 
 
