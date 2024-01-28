@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import MenuComponent from './components/MenuComponent'
 import HomeComponent from './components/HomeComponents'
+import ReviewComponent from './components/ReviewComponents'
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,12 @@ export default function App() {
           name="Menu"
           component={MenuComponent}
         />
+        
+        <Stack.Screen
+          name="Review"
+          component={ReviewComponent}
+        />
+        
       </Stack.Navigator>
 
     </NavigationContainer >

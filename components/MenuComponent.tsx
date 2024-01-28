@@ -7,7 +7,8 @@ import {
     ScrollView,
     StyleSheet,
     StatusBar,
-    TouchableOpacity
+    TouchableOpacity,
+    Button
 } from 'react-native'
 
 const styles = StyleSheet.create({
@@ -102,7 +103,8 @@ interface MenuItem {
     foods: any[];
 }
 
-export default function MenuComponent() {
+
+export default function MenuComponent({ navigation }: {navigation: any}) {
     const [menu, setMenu] = useState<MenuItem[]>([])
 
     useEffect(() => {
@@ -125,6 +127,12 @@ export default function MenuComponent() {
 
     return (
         <ScrollView>
+            <Button 
+            title="Rate"
+            onPress={() =>
+                navigation.navigate('Review', { name: 'Rate' })
+            }
+        />
             {menu.map((item) => <StationDisplay key={item.station} stationName={item.station} foods={item.foods} />)}
         </ScrollView>
     )
