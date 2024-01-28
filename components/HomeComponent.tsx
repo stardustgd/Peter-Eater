@@ -30,26 +30,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function MenuComponent({ navigation }) {
-  return (
-    <SafeAreaView style={styles.container}>
-      <SectionList
-        sections={data}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => (
-          <View>
-            <TouchableOpacity
-              onPress={() => console.log(`pressed ${item}`)}
-              style={styles.item}>
-              <Text style={styles.title}>{item}</Text>
-            </TouchableOpacity>
-          </View>
-        )
-        }
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.header}>{title}</Text>
-        )}
-      />
-    </SafeAreaView >
-  )
-}
+export function Brandywine({})
