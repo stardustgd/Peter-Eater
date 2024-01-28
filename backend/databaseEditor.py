@@ -1,4 +1,5 @@
 import sqlite3
+import requests
 
 def create_connection():
     # Connect to the existing SQLite database file
@@ -34,26 +35,42 @@ def populate_cafeteria_database(cafeterias, cursor):
             cursor.execute(insert_station_query, (station, cafeteria_id))
             print(f'Inserted food: {station} for cafeteria {cafeteria["name"]} (ID: {cursor.lastrowid})')
 
+def populate_food():
+
+    url = "http://127.0.0.1:5000/receive_data"
+
+    payload = ""
+    headers = {"User-Agent": "insomnia/8.6.0"}
+    # response = requests.get(url, headers=headers, params=querystring)
+    
+
+    response = requests.request("GET", url, data=payload, headers=headers)
+    data = response.json() 
+    for station in data:
+        print(station['station'])
+    # print(response.text)
+
 if __name__ == "__main__":
     # Create a connection
-    db, cursor = create_connection()
+    # db, cursor = create_connection()
 
-    # Populate Meals database
-    meals = ['Breakfast', 'Lunch', 'Dinner']
-    populate_meals_database(meals, cursor)
+    # # Populate Meals database
+    # meals = ['Breakfast', 'Lunch', 'Dinner']
+    # populate_meals_database(meals, cursor)
 
-    # Populate Cafeteria database
-    cafeterias = [
-        {'name': 'Brandywine', 'stations': ['Ember/Grill', 'Grubb/Mainline', 'Hearth/Pizza', 'Soups',
-                                             'The Farm Stand/Salad Bar', 'Vegan', 'Crossroads', 'Compass', 'Honeycakes/Bakery']},
-        {'name': 'Ateatery', 'stations': ['Deli', 'Bakery', 'Home', 'Sizzle Grill', 'Fire and Ice Round Grill',
-                                          'Oven', 'Farmer\'s Market', 'Fire and Ice Saute', 'Soups', 'Vegan']}
-    ]
-    populate_cafeteria_database(cafeterias, cursor)
+    # # Populate Cafeteria database
+    # cafeterias = [
+    #     {'name': 'Brandywine', 'stations': ['Ember/Grill', 'Grubb/Mainline', 'Hearth/Pizza', 'Soups',
+    #                                          'The Farm Stand/Salad Bar', 'Vegan', 'Crossroads', 'Compass', 'Honeycakes/Bakery']},
+    #     {'name': 'Ateatery', 'stations': ['Deli', 'Bakery', 'Home', 'Sizzle Grill', 'Fire and Ice Round Grill',
+    #                                       'Oven', 'Farmer\'s Market', 'Fire and Ice Saute', 'Soups', 'Vegan']}
+    # ]
+    # populate_cafeteria_database(cafeterias, cursor)
 
-    # Commit changes and close the connection
-    db.commit()
-    close_connection(db)
+    # # Commit changes and close the connection
+    # db.commit()
+    # close_connection(db)
+    populate_food()
 
 
 
