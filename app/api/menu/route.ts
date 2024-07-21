@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     const data = await response.json()
 
     const completeMenu = data.all.map((location: any) => {
+      const diningHall = data.restaurant
       const station = location.station
       const allFoods = location.menu.flatMap((menu: any) => {
         const category = menu.category
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
         }))
       })
 
-      return { foods: allFoods, station }
+      return { foods: allFoods, station, diningHall }
     })
 
     return NextResponse.json(completeMenu)
