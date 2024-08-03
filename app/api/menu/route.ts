@@ -1,37 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
+  const diningHalls: Record<string, string> = {
+    '3314': 'Brandywine',
+    '3056': 'Anteatery',
+  }
+
   try {
-    const { searchParams } = new URL(request.url)
-    const location = searchParams.get('location') || 'brandywine'
+    // https://uci-campusdish-com.translate.goog/api/menu/GetMenus?locationId=
+    const response = await fetch(
+      'https://uci-campusdish-com.translate.goog/api/menu/GetMenus?locationId=3314'
+    )
 
-    const query = new URLSearchParams({ location }).toString()
-    const url = `https://zotmeal-backend.vercel.app/api?${query}`
-
-    const response = await fetch(url)
-
-    if (!response.ok) throw new Error('Could not fetch ZotMeal data')
+    if (!response.ok) {
+      throw new Error('Could not fetch CampusDish')
+    }
 
     const data = await response.json()
 
-    const completeMenu = data.all.map((location: any) => {
-      const diningHall = data.restaurant
-      const station = location.station
-      const allFoods = location.menu.flatMap((menu: any) => {
-        const category = menu.category
+    const menu =
+      data.Menu.MenuProducts.map((product) => ({
+        name: product.Product.MarketingName,
+        description: product.Product.ShortDescription.split(/\s+/).join(' '),
+        calories: product.Product.NutritionalTree[0].Value,
+        category: product.Product.Categories[0]?.DisplayName.trimEnd(),
+        diningHall: diningHalls[product.Product.LocationId],
+        station: product.StationId,
+      })) || []
 
-        return menu.items.map((item: any) => ({
-          foodName: item.name,
-          foodDescription: item.description,
-          calories: item.nutrition?.calories || 'N/A',
-          category,
-        }))
-      })
-
-      return { foods: allFoods, station, diningHall }
-    })
-
-    return NextResponse.json(completeMenu)
+    return NextResponse.json(menu)
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },
