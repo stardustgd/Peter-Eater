@@ -1,23 +1,26 @@
 'use client'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 import FoodItemCard from '../components/FoodItemCard'
+import { Nutrition } from '../api/menu/route'
 
-interface Food {
-  foodName: string
-  foodDescription: string
-  calories?: string
-  category?: string
-}
-
-interface Location {
-  foods: Food[]
-  station: string
+type FoodItem = {
+  name: string
+  description: string
+  category: string
   diningHall: string
+  station: string
+  isGlutenFree: boolean
+  isKosher: boolean
+  isHalal: boolean
+  isVegan: boolean
+  isVegetarian: boolean
+  nutrition: Nutrition
 }
 
 export default function Home() {
-  const [foodItems, setFoodItems] = useState([])
+  const [menuItems, setMenuItems] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -26,9 +29,7 @@ export default function Home() {
         const response = await fetch('api/menu')
         const data = await response.json()
 
-        console.log(data)
-
-        setFoodItems(data)
+        setMenuItems(data)
       } catch (error) {
         console.error('Error fetching food items:', error)
       } finally {
@@ -46,20 +47,26 @@ export default function Home() {
       </div>
     )
   }
+
   return (
     <div className="h-screen">
       <div className="flex flex-col md:flex-row gap-3 justify-center items-center py-5">
         <div className="flex flex-row flex-wrap gap-3 justify-center">
-          {foodItems.map((location: Location) =>
-            location.foods.map((food) => (
+          {menuItems.map((item: FoodItem, index) => (
+            <Link
+              href={{
+                pathname: `/food/${item.name.replace(/\s+/g, '-').toLowerCase()}`,
+              }}
+            >
               <FoodItemCard
-                foodName={food.foodName}
+                foodName={item.name}
+                location={item.diningHall}
                 rating={3.5}
                 imagePath=""
-                location={location.diningHall}
+                key={index}
               />
-            ))
-          )}
+            </Link>
+          ))}
         </div>
       </div>
     </div>

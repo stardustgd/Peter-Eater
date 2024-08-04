@@ -6,7 +6,7 @@ type SubNutrition = {
   Unit: string | null
 }
 
-type Nutrition = {
+export type Nutrition = {
   Name: string
   Value: string
   Unit: string | null
