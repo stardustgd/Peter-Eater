@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 import FoodItemCard from '../components/FoodItemCard'
-import { Nutrition } from '../api/menu/route'
+import { Nutrition } from '@/app/lib/definitions'
 
 type FoodItem = {
   name: string

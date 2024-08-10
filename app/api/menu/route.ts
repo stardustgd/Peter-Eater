@@ -1,46 +1,6 @@
 import { NextResponse } from 'next/server'
 
-type SubNutrition = {
-  Name: string
-  Value: string
-  Unit: string | null
-}
-
-export type Nutrition = {
-  Name: string
-  Value: string
-  Unit: string | null
-  SubList: SubNutrition[] | null
-}
-
-type Category = {
-  DisplayName: string
-}
-
-type Product = {
-  MarketingName: string
-  ShortDescription: string
-  LocationId: string
-  StationId: string
-  Categories: Category[]
-  IsGlutenFree: boolean
-  IsKosher: boolean
-  IsHalal: boolean
-  IsVegan: boolean
-  IsVegetarian: boolean
-  NutritionalTree: Nutrition[]
-}
-
-type Station = {
-  StationId: string
-  Name: string
-}
-
-type MenuProduct = {
-  StationId: string
-  MenuStations: Station[]
-  Product: Product
-}
+import { Station, MenuProduct } from '@/app/lib/definitions'
 
 export async function GET() {
   const diningHalls: Record<string, string> = {
