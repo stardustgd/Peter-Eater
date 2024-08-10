@@ -1,34 +1,72 @@
-import Image from 'next/image'
+'use client'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { FaArrowRight } from 'react-icons/fa6'
+
+import FoodItemCard from './components/FoodItemCard'
+import { Nutrition } from '@/app/lib/definitions'
+
+type FoodItem = {
+  name: string
+  description: string
+  category: string
+  diningHall: string
+  station: string
+  isGlutenFree: boolean
+  isKosher: boolean
+  isHalal: boolean
+  isVegan: boolean
+  isVegetarian: boolean
+  nutrition: Nutrition
+}
 
 export default function Home() {
+  const [menuItems, setMenuItems] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchFoodItems = async () => {
+      try {
+        const response = await fetch('api/menu')
+        const data = await response.json()
+
+        setMenuItems(data)
+      } catch (error) {
+        console.error('Error fetching food items:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchFoodItems()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <h1 className="text-black">Loading...</h1>
+      </div>
+    )
+  }
+
   return (
-    <div className="relative flex flex-col justify-center items-center h-screen">
-      <Image
-        src="/brandywine.png"
-        alt=""
-        height={1920}
-        width={1080}
-        className="object-cover w-full h-screen"
-      />
-      <div className="absolute top-0 left-0 right-0 bottom-0 w-full h-screen bg-[#0064a480] backdrop-blur-sm flex flex-col">
-        <div className="shadow-2xl bg-[#002244bf] backdrop-blur-sm">
-          <div className="px-4 md:px-24 py-4 flex flex-row items-center">
-            <Image src="/petereater.png" alt="" width={50} height={50} />
-            <h1 className="px-4 md:px-12 text-4xl">Peter Eater</h1>
-          </div>
-        </div>
-        <div className="flex flex-col my-auto pb-24 justify-center items-center">
-          <h1 className="text-center">
-            UCI's <span className="text-[#FECC07]">#1</span> Dining Hall Rating
-            Service
-          </h1>
-          <Link href="home/">
-            <button className="bg-[#FECC07] max-w-fit text-white font-bold py-3 px-6 rounded-full">
-              <FaArrowRight className="size-5" />
-            </button>
-          </Link>
+    <div className="h-screen">
+      <div className="flex flex-col md:flex-row gap-3 justify-center items-center py-5">
+        <div className="flex flex-row flex-wrap gap-3 justify-center">
+          {menuItems.map((item: FoodItem, index) => (
+            <Link
+              href={{
+                pathname: `/food/${item.name.replace(/\s+/g, '-').toLowerCase()}`,
+              }}
+            >
+              <FoodItemCard
+                foodName={item.name}
+                location={item.diningHall}
+                rating={3.5}
+                imagePath=""
+                key={index}
+              />
+            </Link>
+          ))}
         </div>
       </div>
     </div>
