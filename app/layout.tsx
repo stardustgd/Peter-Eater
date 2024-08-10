@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Lexend } from 'next/font/google'
+import { DM_Sans } from 'next/font/google'
 import './globals.css'
 
-const lexend = Lexend({ subsets: ['latin'] })
+const dm_sans = DM_Sans({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Peter Eater',
@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={lexend.className}>{children}</body>
+      <body className={dm_sans.className}>{children}</body>
     </html>
   )
 }
